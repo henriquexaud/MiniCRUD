@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Trash, Pencil } from "react-bootstrap-icons";
 import { Modal } from "react-bootstrap";
-import { CustomForm } from "./Register";
+import { CustomForm } from "../components/CustomForm";
 
 type Registro = {
   name: string;
@@ -21,23 +21,22 @@ export default function Crud() {
     email: "",
   });
 
-useEffect(() => {
-  const localData = localStorage.getItem("registros");
-  if (localData && JSON.parse(localData).length > 0) {
-    setRegistros(JSON.parse(localData));
-  } else {
-    fetch("https://private-9d65b3-tinnova.apiary-mock.com/users")
-      .then((res) => res.json())
-      .then((data: Registro[]) => {
-        setRegistros(data);
-        localStorage.setItem("registros", JSON.stringify(data));
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar usuários da API:", err);
-      });
-  }
-}, []);
-
+  useEffect(() => {
+    const localData = localStorage.getItem("registros");
+    if (localData && JSON.parse(localData).length > 0) {
+      setRegistros(JSON.parse(localData));
+    } else {
+      fetch("https://private-9d65b3-tinnova.apiary-mock.com/users")
+        .then((res) => res.json())
+        .then((data: Registro[]) => {
+          setRegistros(data);
+          localStorage.setItem("registros", JSON.stringify(data));
+        })
+        .catch((err) => {
+          console.error("Erro ao buscar usuários da API:", err);
+        });
+    }
+  }, []);
 
   const excluirRegistro = (index: number) => {
     const novosRegistros = [...registros];
@@ -58,12 +57,12 @@ useEffect(() => {
   };
 
   return (
-    <div className="px-5 py-4 text-start">
-      <h2 className="mb-2">Lista de cadastrados</h2>
+    <div className="px-3 py-2 px-md-5 py-md-4 text-start">
+      <h2 className="mb-2">Lista de usuários</h2>
       <p>Encontre e gerencie os registros salvos.</p>
 
       {registros.length === 0 ? (
-        <p className="text-muted">Nenhum registro encontrado.</p>
+        <p className="text-muted">Nenhum usuário encontrado.</p>
       ) : (
         <div className="table-responsive">
           <table className="table table-borderless align-middle">
@@ -108,31 +107,36 @@ useEffect(() => {
 
       <Modal show={showModal} onHide={fecharModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Editar registro</Modal.Title>
+          <Modal.Title>Editar usuário</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <CustomForm
-                initialValues={{
-                nome: formData.name,
-                cpf: formData.cpf,
-                telefone: formData.phone,
-                email: formData.email,
-                }}
-                submitLabel="Salvar"
-                onSubmit={(values: { nome: string; cpf: string; telefone: string; email: string }) => {
-                if (editIndex === null) return;
-                const novosRegistros = [...registros];
-                novosRegistros[editIndex] = {
-                    name: values.nome,
-                    cpf: values.cpf,
-                    phone: values.telefone,
-                    email: values.email,
-                };
-                setRegistros(novosRegistros);
-                localStorage.setItem("registros", JSON.stringify(novosRegistros));
-                fecharModal();
-                }}
-            />
+          <CustomForm
+            initialValues={{
+              nome: formData.name,
+              cpf: formData.cpf,
+              telefone: formData.phone,
+              email: formData.email,
+            }}
+            submitLabel="Salvar"
+            onSubmit={(values: {
+              nome: string;
+              cpf: string;
+              telefone: string;
+              email: string;
+            }) => {
+              if (editIndex === null) return;
+              const novosRegistros = [...registros];
+              novosRegistros[editIndex] = {
+                name: values.nome,
+                cpf: values.cpf,
+                phone: values.telefone,
+                email: values.email,
+              };
+              setRegistros(novosRegistros);
+              localStorage.setItem("registros", JSON.stringify(novosRegistros));
+              fecharModal();
+            }}
+          />
         </Modal.Body>
       </Modal>
     </div>

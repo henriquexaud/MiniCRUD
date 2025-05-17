@@ -2,18 +2,20 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 #root {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: start;
 }
 
 .btn-primary,
@@ -24,4 +26,3 @@ html, body {
 .btn-primary:disabled {
   color: #fff !important;
 }
-

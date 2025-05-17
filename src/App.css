@@ -1,13 +1,7 @@
 #root {
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
-}
-
-.main-content {
-  display: flex;
-  min-height: calc(100vh - 80px);
-  transition: margin-left 0.3s ease;
 }
 
 .form-floating > .form-control {
@@ -21,7 +15,7 @@
 
 .form-floating > .form-control:focus {
   box-shadow: none;
-  border-bottom-color: #20C7B3;
+  border-bottom-color: #20c7b3;
 }
 
 .form-floating > label {
