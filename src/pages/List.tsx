@@ -10,7 +10,7 @@ type Registro = {
   email: string;
 };
 
-export default function Crud() {
+export default function List() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);

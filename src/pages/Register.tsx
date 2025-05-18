@@ -17,7 +17,7 @@ export default function Register() {
     };
     registros.push(novoRegistro);
     localStorage.setItem("registros", JSON.stringify(registros));
-    window.location.href = "/crud";
+    window.location.href = "/list";
     alert("Registro salvo com sucesso!");
     resetForm();
   };

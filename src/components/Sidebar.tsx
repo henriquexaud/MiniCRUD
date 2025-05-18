@@ -39,7 +39,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           </NavLink>
 
           <NavLink
-            to="/crud"
+            to="/list"
             className={({ isActive }) =>
               `btn ${isMd ? "" : "btn-sm"} btn-outline-secondary text-start${
                 isActive ? " active" : ""
