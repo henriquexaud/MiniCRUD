@@ -46,7 +46,8 @@ export const CustomForm = ({
       .matches(/^\d{11}$/, "CPF deve conter exatamente 11 números"),
     telefone: Yup.string()
       .required("Telefone é obrigatório")
-      .matches(/^\d{11}$/, "Telefone inválido"),
+      // agora aceita 10 OU 11 dígitos
+      .matches(/^\d{10,11}$/, "Telefone deve conter 10 ou 11 dígitos"),
     email: Yup.string().email("Email inválido").required("Email é obrigatório"),
   });
 
@@ -72,6 +73,7 @@ export const CustomForm = ({
 
   return (
     <Formik
+      key={JSON.stringify(initialValues)}
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
@@ -122,11 +124,12 @@ export const CustomForm = ({
           {!isModal && (
             <div className="col-12 d-flex justify-content-end mt-4">
               <button
+                name="submit"
                 type="submit"
                 className={`btn ${
                   isValid && dirty ? "btn-primary" : "btn-secondary"
                 }`}
-                disabled={!(isValid && dirty)}
+                disabled={!isValid || !dirty}
               >
                 {submitLabel}
               </button>

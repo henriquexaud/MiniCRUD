@@ -11,6 +11,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   return (
     <aside
       className="bg-light"
+      data-cy="sidebar"
       style={{
         position: "fixed",
         top: 80,
