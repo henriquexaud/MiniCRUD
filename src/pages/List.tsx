@@ -111,6 +111,7 @@ export default function List() {
         </Modal.Header>
         <Modal.Body>
           <CustomForm
+            isModal
             initialValues={{
               nome: formData.name,
               cpf: formData.cpf,

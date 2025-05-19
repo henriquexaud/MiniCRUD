@@ -6,7 +6,7 @@ import {
   useFormikContext,
   type FormikHelpers,
 } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 
 interface CustomFormProps {
@@ -24,7 +24,7 @@ interface CustomFormProps {
       telefone: string;
       email: string;
     }>
-  ) => void;
+  ) => void | Promise<void>;
   submitLabel?: string;
   isModal?: boolean;
   onFormStatusChange?: (status: { dirty: boolean; isValid: boolean }) => void;
@@ -37,6 +37,8 @@ export const CustomForm = ({
   isModal = false,
   onFormStatusChange,
 }: CustomFormProps) => {
+  const [loading, setLoading] = useState(false);
+
   const validationSchema = Yup.object().shape({
     nome: Yup.string()
       .required("Nome é obrigatório")
@@ -46,12 +48,11 @@ export const CustomForm = ({
       .matches(/^\d{11}$/, "CPF deve conter exatamente 11 números"),
     telefone: Yup.string()
       .required("Telefone é obrigatório")
-      // agora aceita 10 OU 11 dígitos
       .matches(/^\d{10,11}$/, "Telefone deve conter 10 ou 11 dígitos"),
     email: Yup.string().email("Email inválido").required("Email é obrigatório"),
   });
 
-  // Custom hook to notify form status changes
+  // Notifica ao pai mudanças de dirty/isValid
   function FormStatusNotifier({
     onFormStatusChange,
   }: {
@@ -64,19 +65,35 @@ export const CustomForm = ({
       email: string;
     }>();
     useEffect(() => {
-      if (onFormStatusChange) {
-        onFormStatusChange({ dirty, isValid });
-      }
+      onFormStatusChange?.({ dirty, isValid });
     }, [dirty, isValid, onFormStatusChange]);
     return null;
+  }
+
+  async function handleSubmit(
+    values: { nome: string; cpf: string; telefone: string; email: string },
+    formikHelpers: FormikHelpers<{
+      nome: string;
+      cpf: string;
+      telefone: string;
+      email: string;
+    }>
+  ) {
+    setLoading(true);
+    await new Promise((res) => setTimeout(res, 1000));
+    await onSubmit(values, formikHelpers);
+    setLoading(false);
   }
 
   return (
     <Formik
       key={JSON.stringify(initialValues)}
       initialValues={initialValues}
+      initialTouched={
+        isModal ? { nome: true, cpf: true, telefone: true, email: true } : {}
+      }
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       enableReinitialize
     >
       {({ errors, touched, isValid, dirty }) => (
@@ -84,6 +101,7 @@ export const CustomForm = ({
           {onFormStatusChange && (
             <FormStatusNotifier onFormStatusChange={onFormStatusChange} />
           )}
+
           {(
             [
               {
@@ -100,7 +118,7 @@ export const CustomForm = ({
               { name: "email", label: "E-mail", type: "email" },
             ] as const
           ).map(({ name, label, type }) => (
-            <div className={isModal ? "col-12" : "col-md-6"} key={name}>
+            <div className={"col-md-6"} key={name}>
               <div className="form-floating">
                 <Field
                   id={name}
@@ -108,7 +126,11 @@ export const CustomForm = ({
                   type={type}
                   placeholder={label}
                   className={`form-control ${
-                    errors[name] && touched[name] ? "is-invalid" : ""
+                    touched[name] && errors[name]
+                      ? "is-invalid"
+                      : touched[name]
+                      ? "is-valid"
+                      : ""
                   }`}
                 />
                 <label htmlFor={name}>{label}</label>
@@ -121,20 +143,16 @@ export const CustomForm = ({
             </div>
           ))}
 
-          {!isModal && (
-            <div className="col-12 d-flex justify-content-end mt-4">
-              <button
-                name="submit"
-                type="submit"
-                className={`btn ${
-                  isValid && dirty ? "btn-primary" : "btn-secondary"
-                }`}
-                disabled={!isValid || !dirty}
-              >
-                {submitLabel}
-              </button>
-            </div>
-          )}
+          <div className="col-12 d-flex justify-content-end mt-4">
+            <button
+              name="submit"
+              type="submit"
+              className={`custom-button${loading ? " loading" : ""}`}
+              disabled={!isValid || !dirty || loading}
+            >
+              {submitLabel}
+            </button>
+          </div>
         </Form>
       )}
     </Formik>

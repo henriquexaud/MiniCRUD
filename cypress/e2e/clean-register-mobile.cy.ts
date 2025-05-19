@@ -26,7 +26,9 @@ describe("Complete mobile end-to-end flow with API and manual entries (names onl
       cy.findByLabelText(/CPF/i).type(`1234567890${i}`);
       cy.findByLabelText(/Telefone/i).type(`1198765432${i}`);
       cy.findByLabelText(/E-mail/i).type(`${nome.toLowerCase()}@test.com`);
-      cy.findByRole("button", { name: /Cadastrar/i }).click();
+      cy.findByRole("button", { name: /Cadastrar/i })
+        .click()
+        .wait(1000);
     });
 
     cy.visit("/list");
@@ -40,7 +42,9 @@ describe("Complete mobile end-to-end flow with API and manual entries (names onl
     cy.get('button[title="Editar"]').eq(3).click();
     cy.get(".modal").should("be.visible");
     cy.get('input[name="nome"]').clear().type(novos[0].novoNome);
-    cy.get(".modal").within(() => cy.contains("button", "Salvar").click());
+    cy.get(".modal").within(() =>
+      cy.contains("button", "Salvar").click().wait(1000)
+    );
     cy.contains(novos[0].novoNome).should("be.visible");
 
     novos.slice(1).forEach(({ novoNome }, i) => {
@@ -48,7 +52,9 @@ describe("Complete mobile end-to-end flow with API and manual entries (names onl
       cy.get('button[title="Editar"]').eq(idx).click();
       cy.get(".modal").should("be.visible");
       cy.get('input[name="nome"]').clear().type(novoNome);
-      cy.get(".modal").within(() => cy.contains("button", "Salvar").click());
+      cy.get(".modal").within(() =>
+        cy.contains("button", "Salvar").click().wait(1000)
+      );
       cy.contains(novoNome).should("be.visible");
     });
 
@@ -61,7 +67,9 @@ describe("Complete mobile end-to-end flow with API and manual entries (names onl
       cy.get('button[title="Editar"]').eq(index).click();
       cy.get(".modal").should("be.visible");
       cy.get('input[name="nome"]').clear().type(novoNome);
-      cy.get(".modal").within(() => cy.contains("button", "Salvar").click());
+      cy.get(".modal").within(() =>
+        cy.contains("button", "Salvar").click().wait(1000)
+      );
       cy.contains(novoNome).should("be.visible");
     });
 
