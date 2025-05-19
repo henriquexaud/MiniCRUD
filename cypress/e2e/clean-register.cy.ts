@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 import "@testing-library/cypress";
 
 describe("Complete end-to-end flow with API and manual entries", () => {
@@ -41,7 +42,9 @@ describe("Complete end-to-end flow with API and manual entries", () => {
       cy.findByLabelText(/E-mail/i)
         .clear()
         .type(`${nome.toLowerCase()}@test.com`);
-      cy.findByRole("button", { name: /Cadastrar/i }).click();
+      cy.findByRole("button", { name: /Cadastrar/i })
+        .click()
+        .wait(1000);
     });
 
     cy.visit("/list");
@@ -50,44 +53,34 @@ describe("Complete end-to-end flow with API and manual entries", () => {
       "Maria Antonieta",
       "Luiz Souza",
       ...novos.map((n) => n.nome),
-    ].forEach((nome) => {
-      cy.contains(nome).should("be.visible");
-    });
+    ].forEach((name) => cy.contains(name).should("be.visible"));
 
     const primeiro = novos[0];
     cy.get('button[title="Editar"]').eq(3).click();
     cy.get(".modal").should("be.visible");
     cy.get('input[name="nome"]').clear().type(primeiro.novoNome);
-    cy.get(".modal").within(() =>
-      cy.contains("button", "Salvar").should("be.enabled").click()
-    );
+    cy.get(".modal").contains("button", "Salvar").click().wait(1000);
     cy.contains(primeiro.novoNome).should("be.visible");
 
     cy.get('button[title="Editar"]').eq(3).click();
     cy.get('input[name="cpf"]')
       .clear()
       .type(primeiro.novoCpf ?? "");
-    cy.get(".modal").within(() =>
-      cy.contains("button", "Salvar").should("be.enabled").click()
-    );
+    cy.get(".modal").contains("button", "Salvar").click().wait(1000);
     cy.contains(primeiro.novoCpf ?? "").should("be.visible");
 
     cy.get('button[title="Editar"]').eq(3).click();
     cy.get('input[name="telefone"]')
       .clear()
       .type(primeiro.novoTelefone ?? "");
-    cy.get(".modal").within(() =>
-      cy.contains("button", "Salvar").should("be.enabled").click()
-    );
+    cy.get(".modal").contains("button", "Salvar").click().wait(1000);
     cy.contains(primeiro.novoTelefone ?? "").should("be.visible");
 
     cy.get('button[title="Editar"]').eq(3).click();
     cy.get('input[name="email"]')
       .clear()
       .type(primeiro.novoEmail ?? "");
-    cy.get(".modal").within(() =>
-      cy.contains("button", "Salvar").should("be.enabled").click()
-    );
+    cy.get(".modal").contains("button", "Salvar").click().wait(1000);
     cy.contains(primeiro.novoEmail ?? "").should("be.visible");
 
     novos.slice(1).forEach(({ novoNome }, i) => {
@@ -95,9 +88,7 @@ describe("Complete end-to-end flow with API and manual entries", () => {
       cy.get('button[title="Editar"]').eq(idx).click();
       cy.get(".modal").should("be.visible");
       cy.get('input[name="nome"]').clear().type(novoNome);
-      cy.get(".modal").within(() =>
-        cy.contains("button", "Salvar").should("be.enabled").click()
-      );
+      cy.get(".modal").contains("button", "Salvar").click().wait(1000);
       cy.contains(novoNome).should("be.visible");
     });
 
@@ -111,9 +102,7 @@ describe("Complete end-to-end flow with API and manual entries", () => {
       cy.get('button[title="Editar"]').eq(index).click();
       cy.get(".modal").should("be.visible");
       cy.get('input[name="nome"]').clear().type(novoNome);
-      cy.get(".modal").within(() =>
-        cy.contains("button", "Salvar").should("be.enabled").click()
-      );
+      cy.get(".modal").contains("button", "Salvar").click().wait(1000);
       cy.contains(novoNome).should("be.visible");
       cy.contains(nomeAntigo).should("not.exist");
     });
@@ -136,9 +125,8 @@ describe("Complete end-to-end flow with API and manual entries", () => {
     cy.contains(/nenhum usuário encontrado/i).should("be.visible");
 
     cy.reload();
-
-    ["Joao da Silva", "Maria Antonieta", "Luiz Souza"].forEach((nome) =>
-      cy.contains(nome).should("be.visible")
+    ["Joao da Silva", "Maria Antonieta", "Luiz Souza"].forEach((name) =>
+      cy.contains(name).should("be.visible")
     );
   });
 });
