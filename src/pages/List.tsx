@@ -47,7 +47,7 @@ export default function List() {
 
   const abrirModalEdicao = (index: number) => {
     setEditIndex(index);
-    setFormData(registros[index]);
+    setFormData({ ...registros[index] });
     setShowModal(true);
   };
 
